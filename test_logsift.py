@@ -8,8 +8,8 @@ from logsift import detect_level, render_table, sift, templatize
 
 class TestTemplatize(unittest.TestCase):
     def test_masks_ipv4_with_and_without_port(self):
-        self.assertEqual(templatize("conn from 192.168.1.42"), "conn from <IP>")
-        self.assertEqual(templatize("conn from 10.0.0.1:8080"), "conn from <IP>")
+        self.assertEqual(templatize("conn from 203.0.113.42"), "conn from <IP>")
+        self.assertEqual(templatize("conn from 192.0.2.1:8080"), "conn from <IP>")
 
     def test_masks_iso_and_syslog_timestamps(self):
         self.assertEqual(templatize("2026-09-10T07:15:02Z boot"), "<TIMESTAMP> boot")
@@ -24,8 +24,8 @@ class TestTemplatize(unittest.TestCase):
         self.assertEqual(templatize("nic 00:1b:44:11:3a:b7 up"), "nic <MAC> up")
 
     def test_two_lines_differing_only_in_variables_share_a_template(self):
-        a = templatize("2026-09-10T07:15:02Z login failed for user 4821 from 10.0.0.9")
-        b = templatize("2026-09-10T09:41:55Z login failed for user 77 from 192.168.4.4")
+        a = templatize("2026-09-10T07:15:02Z login failed for user 4821 from 192.0.2.9")
+        b = templatize("2026-09-10T09:41:55Z login failed for user 77 from 203.0.113.7")
         self.assertEqual(a, b)
 
     def test_genuinely_different_lines_stay_separate(self):
@@ -74,9 +74,9 @@ class TestDetectLevel(unittest.TestCase):
 class TestSift(unittest.TestCase):
     def setUp(self):
         self.lines = [
-            "2026-09-10T07:00:00Z INFO login ok for user 1 from 10.0.0.1",
-            "2026-09-10T07:00:01Z INFO login ok for user 2 from 10.0.0.2",
-            "2026-09-10T07:00:02Z INFO login ok for user 3 from 10.0.0.3",
+            "2026-09-10T07:00:00Z INFO login ok for user 1 from 192.0.2.1",
+            "2026-09-10T07:00:01Z INFO login ok for user 2 from 192.0.2.2",
+            "2026-09-10T07:00:02Z INFO login ok for user 3 from 192.0.2.3",
             "2026-09-10T07:00:03Z ERROR disk full on /var/log",
             "",
             "2026-09-10T07:00:04Z WARN retry 5",
